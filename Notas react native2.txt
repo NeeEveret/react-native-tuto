@@ -1,0 +1,218 @@
+Borramos todo lo de  "App.js" y escrbimos esto
+
+import React from 'react';		-> importar react
+import {Text} from 'react-native'	->importar  componentes de "react-native"
+				   para usar
+const App =() =>{
+  return <Text>Hello world</Text>	-> aca usamos el comp text pa poner texto
+}
+
+export default App;			-> y lo exportamos
+
+
+Ahora para meterle estilos le agregamos la prop style
+
+return <Text style={{fontSize: 30}}>Hello world</Text>	-> asi metemos estilo
+
+Ahora agregamo otro comp en el import del com "Text"
+
+import {Text, View} from 'react-native'		->asi traemos otro comp
+
+y luego lo agregamos al comp App
+
+const App =() =>{
+  return (
+  <View>						-> comp View
+    <Text style={{fontSize: 30}}>Hello world</Text>		
+  </View>
+  )
+}
+
+Ahora a darle estilo en linea a View, centrar y mas
+
+cod-> <View style={{flex: 1, justifyContent:'center', alignItems:'center'}}> 	inf-> dandole estylo y flex a View
+cod->    <Text style={{fontSize: 30}}>Hello world</Text>
+cod->  </View>
+Ahora usaremos el comp de RNative llamado "StyleSheet" para agrupar los estilos de mejor forma
+Usaremos su metodo ".create" para dalre un objeto entre { }  con variables y los stylos
+De este modo tendremos los estilos declarados en palabras clave como "container" y "title"
+Debemos mover los estilos de View y Text  a este lugar
+StyleSheet.create({	
+  container: {flex: 1, justifyContent:"center", alignItems:"center"},
+  title: {fontSize: 30}
+})
+
+Ahora para poder usarlos lo pondremos en una constante,quedando así.
+cod->	const style = StyleSheet.create({	
+
+Ahora podremos invocar esos estilos con "style.container" o title en la prop del componente donde queramos usarlo
+Ahora lo usaremos en los comp view y Text, dejandolos asi
+  <View style={style.container}>
+    <Text style={style.title}>Hello world</Text>
+  </View>
+
+Ahora arreglamos bien mas el proyecto dejandolo asi 
+
+const App = () => {
+  return (
+    <View style={style.container}>
+      <Text style={style.title}>Hello world</Text>
+    </View>
+  )
+}
+
+const style = StyleSheet.create({
+  container: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#292929" },
+  title: { fontSize: 30, color: "#fff" }
+})
+
+
+Ahora usaremos un comp nuevo "Image"
+
+cod->	import { Text, View, StyleSheet, Image } from 'react-native';		->lo importamos
+
+y lo usamos abajo del comp Text
+
+cod->      <Text style={style.title}>Hello world</Text>
+cod->      <Image
+cod->         source={{uri:'https://picsum.photos/200/200'}}
+cod->         style={{height: 200, width: 200}}
+cod->      />
+
+Pero hay que darle los estilos de alto y ancho para que se vea, aunque lo podremos pasar como variable de stylesheet
+quedando asi
+const style = StyleSheet.create({
+  container: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#292929" },
+  title: { fontSize: 30, color: "#fff" },
+  image: {height: 200, width: 200, borderRadius: 100}	aqui estan los estilos de la imagen ancho y alto
+})
+El border radius tambien para darle forma y estilo
+y en la etiqueta quedaria asi
+      <Image
+      source={{uri:'https://picsum.photos/200/200'}}
+      style={style.image}
+      />
+
+Si queremos usar  imagenes locales que metamos en el proyecto deberemos usar la carpeta de "assets"
+la importamos  en un avariable y la cambiamos por la uri puesta en el comp image
+
+import image from './assets/diamond.png'
+
+y en source de el comp image
+      <Image
+        source={image}
+Aunque lo dejaremos con la imagen que usa de source una uri
+
+Ahora los botones, hay un par
+Primero Bottom, que lo importaremos la lado de los demas comp y lo ponemos debajo del comp image
+<Button
+        color="red"
+        title="Press me"
+        onPress={()=> console.log('Olabondia')}	->onPress es una prop que indica que ejecutar al dar click
+      />
+React native tiene su comp pa lanzar alertas  llamado "Alert" que podemos usar para dar alertas
+lo importamos y cambiamos el console log por un alert
+
+cod->	import { Text, View, StyleSheet, Image, Button, Alert } from 'react-native';	->importandolo
+Cambiando el console.log por el alert componente
+cod->        onPress={() => Alert.alert("olabondi")}	quedando asi
+
+Si queremos un boton mas personalizable podremos usar el comp "TouchableOpacity" que no tendra estilos 
+Lo importamos y usamos
+y añadimos
+
+      <TouchableOpacity
+        onPress={() => Alert.alert("olabondia")}	-> su event listener
+        style={style.button}			-> sus estilos aparte
+      >
+        <Text style={style.buttonText}>Press aqui manin</Text>		-> estilo para eltexto
+      </TouchableOpacity>	
+
+
+Dentro de  style cremaos el objeto button con sus estilos y el del texto
+añadimos esto en styleSheet.create
+	
+  button: {
+    backgroundColor: 'deepskyblue',
+    padding: 7,
+    marginTop: 10
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 20,
+  }
+})
+
+Ahora para hacer que el boton haga cosas, como ver imagenes traeremos modulos de react native
+esta "Reac Native Image Picker"  pero usaremos algo de Expo llamado "ImagePicker"
+
+instalamos image picker por consolaa con 
+cod->	expo install expo-image-picker
+
+luego importamos trayendo todo
+cod->	import * as ImagePicker from 'expo-image-picker';
+
+y luego creamo una funcion pa que acceder a la camara/imagenes
+al inicio y antes del return con los comp
+const App = () => {
+  let openImagePickerAsync = async ()=> {
+    let permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync()
+    if(permissionResult.granted === false){
+      alert('Permiso denegao manin')
+      return;
+    }
+  }
+  return (
+
+Y en la prop de onpres del TouchableOpacity le damos el nombre de la funcion
+ <TouchableOpacity
+        onPress={openImagePickerAsync}		->aqui cambiamos el alert por la funcion
+
+Abajo del if de la funcion openImagePickerAsync  ponemos una var para almacenar una imagen que
+elijamos
+
+    if(permissionResult.granted === false){
+      alert('Permiso denegao manin')
+      return;
+    }					-> el if
+    const pickerResult = await ImagePicker.launchImageLibraryAsync()	-> esto nos dejara elegir una imagen
+    console.log(pickerResult);			-> luego logueamos la var  pa ver su info
+  }
+
+Importamos useState para uasr estado.Ahora cambiaremos la imagen usando estado 
+cod->	import React,{useState} from 'react';
+
+Agregamos el estado abajo de App
+
+const App = () => {
+    const [selectedImage,setSelectedImage] = useState(null)	->el estado
+"selectedImage"  es el nombre que le pusimos a quien contendra los estados
+"setSelectedImage" es el nombre de metodo que creamos para pasarle un objeto con el estado a "selectedImage"  
+
+Modificaremos el metodo "openImagePickerAsync" abajo del if 
+donde recibiremos la imagen y pasarlo al estado para meterla y mostrarla en la app
+  let openImagePickerAsync = async ()=> {
+    let permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync()
+    if(permissionResult.granted === false){
+      alert('Permiso denegao manin')
+      return;
+    }
+    const pickerResult = await ImagePicker.launchImageLibraryAsync()	-> esperaremos a que se selecione una imagen por el usuario
+
+    if(pickerResult.cancelled === true) {		->si es cancelada y es true terminara la funcuin
+      return;
+    }
+    setSelectedImage({localUri: pickerResult.uri})	-> Si no es cancelada actualizaremos con un objeto llamao "localUri:"y le damos la uri
+    console.log(pickerResult);
+  }
+
+
+Ahora haremos que el componente image cambie de imagen usando el estado que creamos
+modificaremos el componente usando un operador ternario
+      <Image
+      source={{uri: selectedImage!== null
+        ? selectedImage.localUri
+        : 'https://picsum.photos/200/200'}}
+      style={style.image}
+Como la imagen es grande le daremos un rezise
+1:08:57
